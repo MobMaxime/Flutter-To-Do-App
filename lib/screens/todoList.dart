@@ -6,18 +6,23 @@ import 'package:to_do/utilities/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
 class todo extends StatefulWidget {
-  int count = 0;
+  final List<Task> taskList;
+
+  todo(this.taskList);
 
   @override
   State<StatefulWidget> createState() {
-    return todo_state();
+    return todo_state(this.taskList);
   }
 }
 
 class todo_state extends State<todo> {
-  int count = 0;
+
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Task> taskList;
+  int count = 0;
+
+  todo_state(this.taskList);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,7 @@ class todo_state extends State<todo> {
           tooltip: "Add Task",
           child: Icon(Icons.add),
           onPressed: () {
-            nagivateToTask(Task('', '', ''), "Add Task", taskList);
+            nagivateToTask(Task('', '', ''), "Add Task");
           }), //FloatingActionButton
     );
   }
@@ -62,7 +67,7 @@ class todo_state extends State<todo> {
                   }), //Gesture Detector
               onTap: () {
                 nagivateToTask(
-                    this.taskList[position], "Edit Task", this.taskList);
+                    this.taskList[position], "Edit Task");
               },
             ), //ListTile
           ); //Card
@@ -85,10 +90,10 @@ class todo_state extends State<todo> {
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
-  void nagivateToTask(Task task, String title, List<Task> taskList) async {
+  void nagivateToTask(Task task, String title) async {
     bool result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => new_task(task, title, taskList)),
+      MaterialPageRoute(builder: (context) => new_task(task, title)),
     );
     if (result == true) {
       updateListView();
@@ -96,11 +101,11 @@ class todo_state extends State<todo> {
   }
 
   void updateListView() {
-    print("update started..............................");
+    print(taskList);
     final Future<Database> dbFuture = databaseHelper.initializeDatabase();
     dbFuture.then((database) {
       Future<List<Task>> taskListFuture = databaseHelper.getTaskList();
-      taskListFuture.then((tasklist) {
+      taskListFuture.then((taskList) {
         setState(() {
           this.taskList = taskList;
           this.count = taskList.length;

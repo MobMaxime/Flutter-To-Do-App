@@ -8,18 +8,16 @@ import 'package:to_do/screens/todoList.dart';
 class new_task extends StatefulWidget {
   final String appBartitle;
   final Task task;
-  final List<Task> taskList;
-  new_task(this.task, this.appBartitle, this.taskList);
+  new_task(this.task, this.appBartitle);
 
   @override
   State<StatefulWidget> createState() {
-    return task_state(this.task, this.appBartitle, this.taskList);
+    return task_state(this.task, this.appBartitle);
   }
 }
 
 class task_state extends State<new_task> {
   todo_state todoState;
-  List<Task> taskList;
   String appBartitle;
   Task task;
 
@@ -33,7 +31,7 @@ class task_state extends State<new_task> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay();
 
-  task_state(this.task, this.appBartitle, this.taskList);
+  task_state(this.task, this.appBartitle);
 
   String formatDate(DateTime selectedDate) =>
       new DateFormat("d MMM, y").format(selectedDate);
