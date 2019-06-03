@@ -100,10 +100,10 @@ class todo_state extends State<todo> {
     final Future<Database> dbFuture = databaseHelper.initializeDatabase();
     dbFuture.then((database) {
       Future<List<Task>> taskListFuture = databaseHelper.getTaskList();
-      taskListFuture.then((tl) {
+      taskListFuture.then((tasklist) {
         setState(() {
-          this.taskList = tl;
-          this.count = tl.length;
+          this.taskList = taskList;
+          this.count = taskList.length;
         });
       });
     });
