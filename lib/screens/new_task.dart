@@ -270,7 +270,7 @@ class task_state extends State<new_task> {
       result = await helper.insertTask(task);
     }
 
-    todoState.updateListView(taskList);
+    todoState.updateListView();
 
     if (result != 0) {
       _showAlertDialog('Status', 'Task saved successfully.');

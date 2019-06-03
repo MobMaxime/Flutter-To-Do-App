@@ -23,7 +23,7 @@ class todo_state extends State<todo> {
   Widget build(BuildContext context) {
     if (taskList == null) {
       taskList = List<Task>();
-      updateListView(taskList);
+      updateListView();
     }
 
     return Scaffold(
@@ -74,7 +74,7 @@ class todo_state extends State<todo> {
     int result = await databaseHelper.deleteTask(task.id);
     if (result != 0) {
       _showSnackBar(context, 'Task Deleted Successfully!');
-      updateListView(taskList);
+      updateListView();
     }
   }
 
@@ -91,7 +91,7 @@ class todo_state extends State<todo> {
       MaterialPageRoute(builder: (context) => new_task(task, title, taskList)),
     );
     if (result == true) {
-      updateListView(taskList);
+      updateListView();
     }
   }
 
