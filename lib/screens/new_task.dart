@@ -4,15 +4,17 @@ import 'package:intl/intl.dart';
 import 'package:to_do/utilities/database_helper.dart';
 import 'package:to_do/models/task.dart';
 import 'package:to_do/screens/todoList.dart';
+import 'package:to_do/utilities/CustomWidget.dart';
 
 class new_task extends StatefulWidget {
   final String appBartitle;
   final Task task;
-  new_task(this.task, this.appBartitle);
+  todo_state todoState;
+  new_task(this.task, this.appBartitle, this.todoState);
 
   @override
   State<StatefulWidget> createState() {
-    return task_state(this.task, this.appBartitle);
+    return task_state(this.task, this.appBartitle, this.todoState);
   }
 }
 
@@ -20,6 +22,8 @@ class task_state extends State<new_task> {
   todo_state todoState;
   String appBartitle;
   Task task;
+
+  final GlobalKey date = new GlobalKey();
 
   DatabaseHelper helper = DatabaseHelper();
   TextEditingController taskController = new TextEditingController();
@@ -31,7 +35,7 @@ class task_state extends State<new_task> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay();
 
-  task_state(this.task, this.appBartitle);
+  task_state(this.task, this.appBartitle, this.todoState);
 
   String formatDate(DateTime selectedDate) =>
       new DateFormat("d MMM, y").format(selectedDate);
@@ -95,7 +99,7 @@ class task_state extends State<new_task> {
         else
           m = minute.toString();
 
-        var time = h + " : " + m + "  " + Time;
+        var time = h + ":" + m + " " + Time;
         setState(() {
           formattedTime = time;
         });
@@ -112,6 +116,12 @@ class task_state extends State<new_task> {
     taskController.text = task.task;
     return Scaffold(
         appBar: AppBar(
+          leading: new GestureDetector(
+            child: Icon(Icons.close, size: 30),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
           title: Text(
             appBartitle,
             style: TextStyle(color: Colors.white),
@@ -131,7 +141,7 @@ class task_state extends State<new_task> {
                     hintStyle: hintStyle), //Input Decoration
                 onChanged: (value) {
                   updateTask();
-                }), //TextFormField
+                }), //TextField
           ), //Padding
 
           ListTile(
@@ -140,7 +150,6 @@ class task_state extends State<new_task> {
             trailing: Icon(Icons.calendar_today),
             onTap: () {
               _selectDate(context);
-              updateDate();
             },
           ), //DateListTile
 
@@ -150,7 +159,6 @@ class task_state extends State<new_task> {
             trailing: Icon(Icons.access_time),
             onTap: () {
               _selectTime(context);
-              updateTime();
             },
           ), //TimeListTile
 
@@ -166,56 +174,48 @@ class task_state extends State<new_task> {
 //          ), //AddToList Tile
 
           Padding(
-              padding: EdgeInsets.all(_minPadding),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RaisedButton(
-                      //shape: RoundedRectangleBorder(
-                      //  borderRadius: BorderRadius.circular(10.0)),
-                      padding: EdgeInsets.all(_minPadding / 2),
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      elevation: 6.0,
-                      child: Text(
-                        "Save",
-                        textAlign: TextAlign.center,
-                        textScaleFactor: 1.7,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _save();
-                        });
-                      },
-                    ), //RaisedButton
-                  ),
-                  Container(
-                    child: SizedBox(width: 10.0),
-                  ),
-                  Expanded(
-                    child: RaisedButton(
-                      //shape: RoundedRectangleBorder(
-                      //  borderRadius: BorderRadius.circular(10.0)),
-                      padding: EdgeInsets.all(_minPadding / 2),
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      elevation: 6.0,
-                      child: Text(
-                        "Delete",
-                        textAlign: TextAlign.center,
-                        textScaleFactor: 1.7,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _delete();
-                        });
-                      },
-                    ), //RaisedButton
-                  )
-                ],
-              ) //Row
-              ) //Padding
+            padding: EdgeInsets.all(_minPadding),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0)),
+              padding: EdgeInsets.all(_minPadding / 2),
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              elevation: 6.0,
+              child: Text(
+                "Save",
+                textAlign: TextAlign.center,
+                textScaleFactor: 1.7,
+              ),
+              onPressed: () {
+                setState(() {
+                  _save();
+                });
+              },
+            ), //RaisedButton
+          ), //Padding
 
+          Padding(
+            padding: EdgeInsets.all(_minPadding),
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0)),
+              padding: EdgeInsets.all(_minPadding / 2),
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              elevation: 6.0,
+              child: Text(
+                "Delete",
+                textAlign: TextAlign.center,
+                textScaleFactor: 1.7,
+              ),
+              onPressed: () {
+                setState(() {
+                  _delete();
+                });
+              },
+            ), //RaisedButton
+          ) //Padding
 //            Center(
 //              child: DropdownButton<String>(
 //                items: _repeat.map((String dropDownStringItem) {
@@ -248,18 +248,19 @@ class task_state extends State<new_task> {
     task.task = taskController.text;
   }
 
-  void updateDate() {
-    task.date = formattedDate;
-  }
-
-  void updateTime() {
-    task.time = formattedTime;
-  }
+//  void updateDate() {
+//    task.date = formattedDate;
+//  }
+//
+//  void updateTime() {
+//    task.time = formattedTime;
+//  }
 
   //Save data
   void _save() async {
-    Navigator.pop(context);
     int result;
+    task.date = formattedDate;
+    task.time = formattedTime;
     if (task.id != null) {
       //Update Operation
       result = await helper.updateTask(task);
@@ -267,24 +268,17 @@ class task_state extends State<new_task> {
       //Insert Operation
       result = await helper.insertTask(task);
     }
-
+    print("result is :  $result");
     todoState.updateListView();
+
+    Navigator.pop(context);
 
     if (result != 0) {
       _showAlertDialog('Status', 'Task saved successfully.');
-
     } else {
       _showAlertDialog('Status', 'Problem saving task.');
     }
   } //_save()
-
-//  void _delete(BuildContext context, Task task) async {
-//    int result = await databaseHelper.deleteTask(task.id);
-//    if (result != 0) {
-//      _showSnackBar(context, 'Task Deleted Successfully!');
-//      updateListView();
-//    }
-//  }
 
   void _delete() async {
     Navigator.pop(context);
@@ -295,8 +289,9 @@ class task_state extends State<new_task> {
     }
 
     int result = await helper.deleteTask(task.id);
-    print("afte ..................................................... delete");
+
     todoState.updateListView();
+
     if (result != 0) {
       _showAlertDialog('Status', 'Task Deleted Successfully.');
     } else {

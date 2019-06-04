@@ -4,25 +4,20 @@ import 'dart:async';
 import 'package:to_do/models/task.dart';
 import 'package:to_do/utilities/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:to_do/utilities/CustomWidget.dart';
 
 class todo extends StatefulWidget {
-  final List<Task> taskList;
-
-  todo(this.taskList);
-
   @override
   State<StatefulWidget> createState() {
-    return todo_state(this.taskList);
+    return todo_state();
   }
 }
 
 class todo_state extends State<todo> {
-
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Task> taskList;
   int count = 0;
-
-  todo_state(this.taskList);
+  todo_state();
 
   @override
   Widget build(BuildContext context) {
@@ -41,59 +36,99 @@ class todo_state extends State<todo> {
           tooltip: "Add Task",
           child: Icon(Icons.add),
           onPressed: () {
-            nagivateToTask(Task('', '', ''), "Add Task");
+            navigateToTask(Task('', '', ''), "Add Task", this);
           }), //FloatingActionButton
     );
   }
 
-  ListView getListView() {
+//  ListView getListView() {
+//    return ListView.builder(
+//        itemCount: count,
+//        itemBuilder: (BuildContext context, int position) {
+//          return Card(
+//            elevation: 2.0,
+//            color: Colors.white,
+//            child: ListTile(
+//              title: Text(this.taskList[position].task),
+//              subtitle: Text(this.taskList[position].date),
+//              trailing: Icon((Icons.arrow_forward), color: Theme.of(context).primaryColor, size: 30,),
+////              CircleAvatar(
+////                backgroundColor: Theme.of(context).primaryColor,
+////                child: Icon(Icons.arrow_forward_ios, color: Colors.white),
+////              ),
+//              onTap: () {
+//                nagivateToTask(
+//                    this.taskList[position], "Edit Task", this);
+//              },
+//            ), //ListTile
+//          ); //Card
+//        });
+//  } //getListView()
+
+
+    ListView getListView() {
     return ListView.builder(
         itemCount: count,
         itemBuilder: (BuildContext context, int position) {
-          return Card(
+          return new GestureDetector(
+              onTap: () {
+                navigateToTask(
+                  this.taskList[position],"Edit Task", this);
+              },
+              child: Card(
+            margin: EdgeInsets.all(5.0),
             elevation: 2.0,
             color: Colors.white,
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Theme.of(context).primaryColor,
-                child: Icon(Icons.arrow_forward_ios, color: Colors.white),
-              ),
-              title: Text(this.taskList[position].task),
-              subtitle: Text(this.taskList[position].date),
-              trailing: GestureDetector(
-                  child: Icon(Icons.delete, color: Colors.grey),
-                  onTap: () {
-                    _delete(context, taskList[position]);
-                  }), //Gesture Detector
-              onTap: () {
-                nagivateToTask(
-                    this.taskList[position], "Edit Task");
-              },
-            ), //ListTile
-          ); //Card
+            child: CustomWidget(
+            title: this.taskList[position].task,
+            sub1: this.taskList[position].date,
+            sub2: this.taskList[position].time,
+              trailing: Icon(
+                  Icons.edit,
+                  color: Theme.of(context).primaryColor,
+                  size: 28,
+                ),
+          ),
+
+
+          ) //Card
+          );
         });
   } //getListView()
 
+//  ListView getListView() {
+//    return ListView.builder(
+//        itemCount: count,
+//        itemBuilder: (BuildContext context, int position) {
+//          return CustomWidget(
+//            title: this.taskList[position].task,
+//            sub1: this.taskList[position].date,
+//            sub2: this.taskList[position].time,
+//          );
+//        });
+//  } //g
+
   //Delete Task
-  void _delete(BuildContext context, Task task) async {
-    int result = await databaseHelper.deleteTask(task.id);
-    if (result != 0) {
-      _showSnackBar(context, 'Task Deleted Successfully!');
-      updateListView();
-    }
-  }
+//  void _delete(BuildContext context, Task task) async {
+//    int result = await databaseHelper.deleteTask(task.id);
+//    if (result != 0) {
+//      _showSnackBar(context, 'Task Deleted Successfully!');
+//      updateListView();
+//    }
+//  }
 
-  void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(
-      content: Text(message),
-    );
-    Scaffold.of(context).showSnackBar(snackBar);
-  }
+//  void _showSnackBar(BuildContext context, String message) {
+//    final snackBar = SnackBar(
+//      content: Text(message),
+//      duration: Duration(seconds: 1),
+//    );
+//    Scaffold.of(context).showSnackBar(snackBar);
+//  }
 
-  void nagivateToTask(Task task, String title) async {
+  void navigateToTask(Task task, String title, todo_state obj) async {
     bool result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => new_task(task, title)),
+      MaterialPageRoute(builder: (context) => new_task(task, title, obj)),
     );
     if (result == true) {
       updateListView();
@@ -101,7 +136,6 @@ class todo_state extends State<todo> {
   }
 
   void updateListView() {
-    print(taskList);
     final Future<Database> dbFuture = databaseHelper.initializeDatabase();
     dbFuture.then((database) {
       Future<List<Task>> taskListFuture = databaseHelper.getTaskList();
@@ -112,6 +146,5 @@ class todo_state extends State<todo> {
         });
       });
     });
-    print("update ended..............................");
   }
 }
