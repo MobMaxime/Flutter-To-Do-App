@@ -117,13 +117,6 @@ class todo_state extends State<todo> {
 //    }
 //  }
 
-//  void _showSnackBar(BuildContext context, String message) {
-//    final snackBar = SnackBar(
-//      content: Text(message),
-//      duration: Duration(seconds: 1),
-//    );
-//    Scaffold.of(context).showSnackBar(snackBar);
-//  }
 
   void navigateToTask(Task task, String title, todo_state obj) async {
     bool result = await Navigator.push(
