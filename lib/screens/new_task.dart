@@ -4,13 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:to_do/utilities/database_helper.dart';
 import 'package:to_do/models/task.dart';
 import 'package:to_do/screens/todoList.dart';
-import 'package:to_do/utilities/CustomWidget.dart';
+import 'package:to_do/utilities/Utils.dart';
 
 class new_task extends StatefulWidget {
   final String appBartitle;
   final Task task;
   todo_state todoState;
   new_task(this.task, this.appBartitle, this.todoState);
+  bool _isEditable = false;
 
   @override
   State<StatefulWidget> createState() {
@@ -22,8 +23,9 @@ class task_state extends State<new_task> {
   todo_state todoState;
   String appBartitle;
   Task task;
+  List<Widget> icons;
 
-  final GlobalKey date = new GlobalKey();
+  final scaffoldkey = GlobalKey<ScaffoldState>();
 
   DatabaseHelper helper = DatabaseHelper();
   TextEditingController taskController = new TextEditingController();
@@ -33,6 +35,7 @@ class task_state extends State<new_task> {
   var _minPadding = 10.0;
   DateTime _initialDate = DateTime.now();
   DateTime selectedDate = DateTime.now();
+  TimeOfDay _initialTime = TimeOfDay.now();
   TimeOfDay selectedTime = TimeOfDay();
 
   task_state(this.task, this.appBartitle, this.todoState);
@@ -40,17 +43,18 @@ class task_state extends State<new_task> {
   String formatDate(DateTime selectedDate) =>
       new DateFormat("d MMM, y").format(selectedDate);
 
-  String formatTime(TimeOfDay selectedTime) {}
-
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: _initialDate,
         firstDate: _initialDate,
+        initialDate: task.date.isEmpty
+            ? _initialDate
+            : new DateFormat("d MMM, y").parse(task.date),
         lastDate: DateTime(2021));
     if (picked != null && picked != selectedDate)
       setState(() {
         formattedDate = formatDate(picked);
+        task.date = formattedDate;
       });
   }
 
@@ -58,6 +62,7 @@ class task_state extends State<new_task> {
     final TimeOfDay picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+      //initialTime: task.time.isEmpty ? _initialTime : new TimeOfDay().parse(task.time),
       builder: (BuildContext context, Widget child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
@@ -102,6 +107,7 @@ class task_state extends State<new_task> {
         var time = h + ":" + m + " " + Time;
         setState(() {
           formattedTime = time;
+          task.time = formattedTime;
         });
       });
   }
@@ -111,10 +117,10 @@ class task_state extends State<new_task> {
     TextStyle textStyle = Theme.of(context).textTheme.title;
     TextStyle hintStyle =
         TextStyle(fontStyle: FontStyle.italic, color: Colors.grey);
-    //TextStyle hstyle = hintStyle;
 
     taskController.text = task.task;
     return Scaffold(
+        key: scaffoldkey,
         appBar: AppBar(
           leading: new GestureDetector(
             child: Icon(Icons.close, size: 30),
@@ -136,7 +142,6 @@ class task_state extends State<new_task> {
                 decoration: InputDecoration(
                     labelText: "Task",
                     hintText: "E.g.  Pick Julie from School",
-                    //border: OutlineInputBorder(borderRadius: BorderRadius.zero),
                     labelStyle: textStyle,
                     hintStyle: hintStyle), //Input Decoration
                 onChanged: (value) {
@@ -145,7 +150,7 @@ class task_state extends State<new_task> {
           ), //Padding
 
           ListTile(
-            title: Text("$formattedDate"),
+            title: task.date.isEmpty ? Text("Pick Date") : Text(task.date),
             subtitle: Text(""),
             trailing: Icon(Icons.calendar_today),
             onTap: () {
@@ -154,24 +159,13 @@ class task_state extends State<new_task> {
           ), //DateListTile
 
           ListTile(
-            title: Text("$formattedTime"),
+            title: task.time.isEmpty ? Text("Select Time") : Text(task.time),
             subtitle: Text(""),
             trailing: Icon(Icons.access_time),
             onTap: () {
               _selectTime(context);
             },
           ), //TimeListTile
-
-//        SizedBox.fromSize(
-//          size: Size(30.0, 30.0),
-//        ),
-
-//          ListTile(
-//            title: Text("Add to List"),
-//            subtitle: Text(""),
-//            trailing: Icon(Icons.add),
-//            onTap: () {},
-//          ), //AddToList Tile
 
           Padding(
             padding: EdgeInsets.all(_minPadding),
@@ -197,114 +191,120 @@ class task_state extends State<new_task> {
 
           Padding(
             padding: EdgeInsets.all(_minPadding),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.0)),
-              padding: EdgeInsets.all(_minPadding / 2),
-              color: Theme.of(context).primaryColor,
-              textColor: Colors.white,
-              elevation: 6.0,
-              child: Text(
-                "Delete",
-                textAlign: TextAlign.center,
-                textScaleFactor: 1.7,
-              ),
-              onPressed: () {
-                setState(() {
-                  _delete();
-                });
-              },
-            ), //RaisedButton
+            child: _isEditable()
+                ? RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50.0)),
+                    padding: EdgeInsets.all(_minPadding / 2),
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                    elevation: 6.0,
+                    child: Text(
+                      "Delete",
+                      textAlign: TextAlign.center,
+                      textScaleFactor: 1.7,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _delete();
+                      });
+                    },
+                  ) //RaisedButton
+                : Container(),
           ) //Padding
-//            Center(
-//              child: DropdownButton<String>(
-//                items: _repeat.map((String dropDownStringItem) {
-//                  return DropdownMenuItem<String>(
-//                    value: dropDownStringItem,
-//                    child: Text(
-//                      dropDownStringItem,
-//                      style: TextStyle(
-//                        fontSize: 20.0,
-//                        color: Colors.white,
-//                      ),
-//                    ),
-//                  );
-//                }).toList(),
-//                value: _repeatSelected,
-//                onChanged: (String newValueSelected) {
-//                  //code
-//                  setState(() {
-//                    this._repeatSelected = newValueSelected;
-//                  });
-//                },
-//              ), //DropdownButton
-//            )
         ]) //ListView
 
         ); //Scaffold
   } //build()
 
+  bool _isEditable() {
+    if (this.appBartitle == "Add Task")
+      return false;
+    else {
+      return true;
+    }
+  }
+
   void updateTask() {
     task.task = taskController.text;
   }
 
-//  void updateDate() {
-//    task.date = formattedDate;
-//  }
-//
-//  void updateTime() {
-//    task.time = formattedTime;
-//  }
+  //InputConstraints
+  bool _checkNotNull() {
+    bool res;
+    if (taskController.text.isEmpty) {
+      _showSnackBar('Task cannot be empty');
+      res = false;
+    } else if (task.date.isEmpty) {
+      _showSnackBar('Please select the Date');
+      res = false;
+    } else if (task.time.isEmpty) {
+      _showSnackBar('Please select the Time');
+      res = false;
+    } else {
+      res = true;
+    }
+    return res;
+  }
+
+  void _showSnackBar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 1, milliseconds: 500),
+    );
+    scaffoldkey.currentState.showSnackBar(snackBar);
+  }
 
   //Save data
   void _save() async {
     int result;
-    task.date = formattedDate;
-    task.time = formattedTime;
-    if (task.id != null) {
-      //Update Operation
-      result = await helper.updateTask(task);
-    } else {
-      //Insert Operation
-      result = await helper.insertTask(task);
-    }
-    print("result is :  $result");
-    todoState.updateListView();
+    if (_checkNotNull() == true) {
+      if (task.id != null) {
+        //Update Operation
+        result = await helper.updateTask(task);
+      } else {
+        //Insert Operation
+        result = await helper.insertTask(task);
+      }
+      print("result is :  $result");
+      todoState.updateListView();
 
-    Navigator.pop(context);
+      Navigator.pop(context);
 
-    if (result != 0) {
-      _showAlertDialog('Status', 'Task saved successfully.');
-    } else {
-      _showAlertDialog('Status', 'Problem saving task.');
+      if (result != 0) {
+        Utils.showAlertDialog(context, 'Status', 'Task saved successfully.');
+      } else {
+        Utils.showAlertDialog(context, 'Status', 'Problem saving task.');
+      }
     }
   } //_save()
 
-  void _delete() async {
-    Navigator.pop(context);
-
-    if (task.id == null) {
-      _showAlertDialog('Status', 'No Task was Created');
-      return;
-    }
-
-    int result = await helper.deleteTask(task.id);
-
-    todoState.updateListView();
-
-    if (result != 0) {
-      _showAlertDialog('Status', 'Task Deleted Successfully.');
-    } else {
-      _showAlertDialog('Status', 'Error occured while Deleting Task');
-    }
-  } //_delete()
-
-  void _showAlertDialog(String title, String message) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-    );
-
-    showDialog(context: context, builder: (_) => alertDialog);
+  void _delete() {
+    int result;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Are you sure, you want to delete this task?"),
+            actions: <Widget>[
+              RawMaterialButton(
+                onPressed: () async {
+                  await helper.deleteTask(task.id);
+                  todoState.updateListView();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  _showSnackBar('Task Deleted Successfully.');
+                },
+                child: Text("Yes"),
+              ),
+              RawMaterialButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("No"),
+              )
+            ],
+          );
+        });
   }
 } //class task_state
