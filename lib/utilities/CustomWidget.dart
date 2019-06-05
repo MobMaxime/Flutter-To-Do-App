@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_do/utilities/styles.dart';
 
 class CustomWidget extends StatelessWidget {
   CustomWidget({
@@ -14,6 +15,9 @@ class CustomWidget extends StatelessWidget {
   final String sub2;
   final Widget trailing;
 
+  final TextStyle subTextStyle = Styles.subTextStyle;
+  final TextStyle hintStyle = Styles.hintStyle;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -27,7 +31,7 @@ class CustomWidget extends StatelessWidget {
                   '$title',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 18.0),
+                  style: subTextStyle,
                 ), //Text
 
                 const Padding(padding: EdgeInsets.only(bottom: 2.0)),
@@ -35,7 +39,7 @@ class CustomWidget extends StatelessWidget {
                 Text(
                   '$sub1 · $sub2',
                   maxLines: 1,
-                  style: TextStyle(color: Colors.grey, fontSize: 15.0),
+                  style: hintStyle,
                 ),
               ],
             ), //Column

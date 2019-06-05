@@ -5,6 +5,7 @@ import 'package:to_do/models/task.dart';
 import 'package:to_do/utilities/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:to_do/utilities/CustomWidget.dart';
+import 'package:to_do/utilities/styles.dart';
 
 class todo extends StatefulWidget {
   @override
@@ -17,7 +18,8 @@ class todo_state extends State<todo> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Task> taskList;
   int count = 0;
-  todo_state();
+
+  TextStyle buttonStyle = Styles.buttonStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +41,7 @@ class todo_state extends State<todo> {
             navigateToTask(Task('', '', ''), "Add Task", this);
           }), //FloatingActionButton
     );
-  }
+  }//build()
 
   ListView getListView() {
     return ListView.builder(
@@ -90,5 +92,5 @@ class todo_state extends State<todo> {
         });
       });
     });
-  }
+  }//updateListView()
 }

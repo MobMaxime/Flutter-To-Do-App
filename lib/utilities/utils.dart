@@ -23,14 +23,21 @@ class Utils {
     showDialog(context: context, builder: (_) => alertDialog);
   }
 
-  Future<String> SelectDate(BuildContext context, String date) async {
-    var a = new DateFormat("d MMM, y").parse(date);
+  void showSnackBar(var scaffoldkey, String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 1, milliseconds: 500),
+    );
+    scaffoldkey.currentState.showSnackBar(snackBar);
+  }
+
+  Future<String> selectDate(BuildContext context, String date) async {
     final DateTime picked = await showDatePicker(
         context: context,
         firstDate: DateTime.now(),
         initialDate: date.isEmpty
             ? DateTime.now()
-            : a,
+            : new DateFormat("d MMM, y").parse(date),
         lastDate: DateTime(2021));
         if (picked != null)
           return formatDate(picked);
@@ -38,7 +45,7 @@ class Utils {
     return "";
   }
 
-  Future<String> SelectTime(BuildContext context) async {
+  Future<String> selectTime(BuildContext context) async {
     final TimeOfDay picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
