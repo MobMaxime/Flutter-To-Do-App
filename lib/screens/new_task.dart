@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:to_do/utilities/database_helper.dart';
 import 'package:to_do/models/task.dart';
 import 'package:to_do/screens/todoList.dart';
-//import 'package:to_do/utilities/CustomWidget.dart';
 import 'package:to_do/utilities/Utils.dart';
 
 class new_task extends StatefulWidget {
@@ -47,7 +46,6 @@ class task_state extends State<new_task> {
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
-        //initialDate: _initialDate,
         firstDate: _initialDate,
         initialDate: task.date.isEmpty
             ? _initialDate
@@ -119,38 +117,23 @@ class task_state extends State<new_task> {
     TextStyle textStyle = Theme.of(context).textTheme.title;
     TextStyle hintStyle =
         TextStyle(fontStyle: FontStyle.italic, color: Colors.grey);
-    //TextStyle hstyle = hintStyle;
 
     taskController.text = task.task;
     return Scaffold(
         key: scaffoldkey,
         appBar: AppBar(
-            leading: new GestureDetector(
-              child: Icon(Icons.close, size: 30),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Text(
-              appBartitle,
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.blue,
-//            actions: _isEditable()
-//                ? <Widget>[
-//                    IconButton(
-//                      icon: Icon(
-//                        Icons.edit,
-//                        color: Colors.white,
-//                      ),
-//                      onPressed: (){
-//                        this.appBartitle = "Edit Task";
-//
-//                      },
-//                    )
-//                  ]
-//                : <Widget>[]
-                ),
+          leading: new GestureDetector(
+            child: Icon(Icons.close, size: 30),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text(
+            appBartitle,
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.blue,
+        ),
         body: ListView(children: <Widget>[
           Padding(
             padding: EdgeInsets.all(_minPadding),
@@ -159,7 +142,6 @@ class task_state extends State<new_task> {
                 decoration: InputDecoration(
                     labelText: "Task",
                     hintText: "E.g.  Pick Julie from School",
-                    //border: OutlineInputBorder(borderRadius: BorderRadius.zero),
                     labelStyle: textStyle,
                     hintStyle: hintStyle), //Input Decoration
                 onChanged: (value) {
@@ -230,38 +212,10 @@ class task_state extends State<new_task> {
                   ) //RaisedButton
                 : Container(),
           ) //Padding
-//            Center(
-//              child: DropdownButton<String>(
-//                items: _repeat.map((String dropDownStringItem) {
-//                  return DropdownMenuItem<String>(
-//                    value: dropDownStringItem,
-//                    child: Text(
-//                      dropDownStringItem,
-//                      style: TextStyle(
-//                        fontSize: 20.0,
-//                        color: Colors.white,
-//                      ),
-//                    ),
-//                  );
-//                }).toList(),
-//                value: _repeatSelected,
-//                onChanged: (String newValueSelected) {
-//                  //code
-//                  setState(() {
-//                    this._repeatSelected = newValueSelected;
-//                  });
-//                },
-//              ), //DropdownButton
-//            )
         ]) //ListView
 
         ); //Scaffold
   } //build()
-
-//  Icon editIcon(){
-//    if(this.appBartitle == 'Edit Task')
-//      return Icon(Icons.edit, size: 30);
-//  }
 
   bool _isEditable() {
     if (this.appBartitle == "Add Task")
@@ -275,15 +229,7 @@ class task_state extends State<new_task> {
     task.task = taskController.text;
   }
 
-//  void updateDate() {
-//    task.date = formattedDate;
-//  }
-//
-//  void updateTime() {
-//    task.time = formattedTime;
-//  }
-
-  //CheckConstraints
+  //InputConstraints
   bool _checkNotNull() {
     bool res;
     if (taskController.text.isEmpty) {
@@ -326,9 +272,9 @@ class task_state extends State<new_task> {
       Navigator.pop(context);
 
       if (result != 0) {
-        Utils.ShowAlertDialog(context, 'Status', 'Task saved successfully.');
+        Utils.showAlertDialog(context, 'Status', 'Task saved successfully.');
       } else {
-        Utils.ShowAlertDialog(context, 'Status', 'Problem saving task.');
+        Utils.showAlertDialog(context, 'Status', 'Problem saving task.');
       }
     }
   } //_save()
@@ -361,12 +307,4 @@ class task_state extends State<new_task> {
           );
         });
   }
-
-//  void ShowAlertDialog(String title, String message) {
-//    AlertDialog alertDialog = AlertDialog(
-//      title: Text(title),
-//      content: Text(message),
-//    );
-//    showDialog(context: context, builder: (_) => alertDialog);
-//  }
 } //class task_state

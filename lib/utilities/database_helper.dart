@@ -14,7 +14,6 @@ class DatabaseHelper {
   String colTask = "task";
   String colDate = "date";
   String colTime = "time";
-  //String colAdded = "addToList";
 
   DatabaseHelper._createInstance();
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:to_do/screens/todoList.dart';
 
 void main() {
-
   runApp(
     new MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -15,8 +14,3 @@ void main() {
     ),
   );
 }
-
-
-
-
-
