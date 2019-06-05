@@ -46,7 +46,7 @@ class DatabaseHelper {
   void _createDb(Database db, int newVersion) async {
     await db.execute(
         'CREATE TABLE $taskTable ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTask TEXT, $colDate TEXT, $colTime TEXT)');
-  } //colAdded BOOLEAN removed temporarily
+  }
 
   //Fetch Operation: Get all Task objects from database
   Future<List<Map<String, dynamic>>> getTaskMapList() async {
