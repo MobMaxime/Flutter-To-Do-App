@@ -14,6 +14,7 @@ class DatabaseHelper {
   String colTask = "task";
   String colDate = "date";
   String colTime = "time";
+  String colStatus = "status";
 
   DatabaseHelper._createInstance();
 
@@ -45,14 +46,14 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async {
     await db.execute(
-        'CREATE TABLE $taskTable ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTask TEXT, $colDate TEXT, $colTime TEXT)');
+        'CREATE TABLE $taskTable ($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTask TEXT, $colDate TEXT, $colTime TEXT, $colStatus TEXT)');
   }
 
   //Fetch Operation: Get all Task objects from database
   Future<List<Map<String, dynamic>>> getTaskMapList() async {
     Database db = await this.database;
     //var result = db.rawQuery('SELECT * FROM $taskTable order by $colDate, $colTime ASC');
-    var result = db.query(taskTable, orderBy: '$colDate, $colTime');
+    var result = db.query(taskTable, orderBy: '$colStatus, $colDate, $colTime');
     return result;
   }
 

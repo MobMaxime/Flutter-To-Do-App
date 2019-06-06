@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:to_do/utilities/database_helper.dart';
 import 'package:to_do/models/task.dart';
 import 'package:to_do/screens/todo_list.dart';
-import 'package:to_do/utilities/styles.dart';
 import 'package:to_do/utilities/utils.dart';
+
+var globalDate = "Pick Date";
 
 class new_task extends StatefulWidget {
   final String appBarTitle;
@@ -23,12 +24,22 @@ class task_state extends State<new_task> {
   String appBarTitle;
   Task task;
   List<Widget> icons;
+  bool marked = false;
+
+  TextStyle titleStyle = new TextStyle(
+    fontSize: 18,
+    fontFamily: "Lato",
+  );
+
+  TextStyle buttonStyle =
+      new TextStyle(fontSize: 18, fontFamily: "Lato", color: Colors.white);
 
   final scaffoldkey = GlobalKey<ScaffoldState>();
 
   DatabaseHelper helper = DatabaseHelper();
   Utils utility = new Utils();
   TextEditingController taskController = new TextEditingController();
+
 
   var formattedDate = "Pick Date";
   var formattedTime = "Select Time";
@@ -40,11 +51,6 @@ class task_state extends State<new_task> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Styles.textStyle;
-    TextStyle hintStyle = Styles.hintStyle;
-    TextStyle buttonStyle = Styles.buttonStyle;
-    TextStyle subTextStyle = Styles.subTextStyle;
-
     taskController.text = task.task;
     return Scaffold(
         key: scaffoldkey,
@@ -53,30 +59,55 @@ class task_state extends State<new_task> {
             child: Icon(Icons.close, size: 30),
             onTap: () {
               Navigator.pop(context);
+              todoState.updateListView();
             },
           ),
-          title: Text(appBarTitle),
+          title: Text(appBarTitle, style: TextStyle(fontSize: 25)),
         ),
         body: ListView(children: <Widget>[
           Padding(
+            padding: EdgeInsets.only(right: 50.0),
+            child: CheckboxListTile(
+                title: Text("Mark as Done", style: titleStyle),
+                value: marked,
+                onChanged: (bool value) {
+                 setState(() {
+                   marked = value;
+                 });
+                }
+                ),
+          ),
+
+
+
+          Padding(
             padding: EdgeInsets.all(_minPadding),
             child: TextField(
-                controller: taskController,
-                decoration: InputDecoration(
-                    labelText: "Task",
-                    hintText: "E.g.  Pick Julie from School",
-                    labelStyle: textStyle,
-                    hintStyle: hintStyle), //Input Decoration
-                onChanged: (value) {
-                  updateTask();
-                }), //TextField
+              controller: taskController,
+              decoration: InputDecoration(
+                  labelText: "Task",
+                  hintText: "E.g.  Pick Julie from School",
+                  labelStyle: TextStyle(
+                    fontSize: 20,
+                    fontFamily: "Lato",
+                    fontWeight: FontWeight.bold,
+                  ),
+                  hintStyle: TextStyle(
+                      fontSize: 18,
+                      fontFamily: "Lato",
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey)), //Input Decoration
+              onChanged: (value) {
+                updateTask();
+              },
+            ), //TextField
           ), //Padding
 
           ListTile(
             title: task.date.isEmpty
                 ? Text(
                     "Pick Date",
-                    style: subTextStyle,
+                    style: titleStyle,
                   )
                 : Text(task.date),
             subtitle: Text(""),
@@ -85,7 +116,7 @@ class task_state extends State<new_task> {
               var pickedDate = await utility.selectDate(context, task.date);
               if (pickedDate != null && !pickedDate.isEmpty)
                 setState(() {
-                  formattedDate = pickedDate.toString();
+                  this.formattedDate = pickedDate.toString();
                   task.date = formattedDate;
                 });
             },
@@ -95,7 +126,7 @@ class task_state extends State<new_task> {
             title: task.time.isEmpty
                 ? Text(
                     "Select Time",
-                    style: subTextStyle,
+                    style: titleStyle,
                   )
                 : Text(task.time),
             subtitle: Text(""),
@@ -162,6 +193,8 @@ class task_state extends State<new_task> {
         ); //Scaffold
   } //build()
 
+  void markedDone() {}
+
   bool _isEditable() {
     if (this.appBarTitle == "Add Task")
       return false;
@@ -195,6 +228,15 @@ class task_state extends State<new_task> {
   //Save data
   void _save() async {
     int result;
+    if(marked)
+      task.status = "Task Completed";
+    else
+      task.status = "Task Incomplete";
+
+    task.task = taskController.text;
+    task.date = formattedDate;
+
+
     if (_checkNotNull() == true) {
       if (task.id != null) {
         //Update Operation
