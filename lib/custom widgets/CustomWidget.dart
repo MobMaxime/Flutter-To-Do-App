@@ -6,6 +6,7 @@ class CustomWidget extends StatelessWidget {
     this.title,
     this.sub1,
     this.sub2,
+    this.delete,
     this.trailing,
     this.status,
   }) : super(key: key);
@@ -13,6 +14,7 @@ class CustomWidget extends StatelessWidget {
   final String title;
   final String sub1;
   final String sub2;
+  final Widget delete;
   final Widget trailing;
   final String status;
 
@@ -54,6 +56,7 @@ class CustomWidget extends StatelessWidget {
               ],
             ), //Column
           ),
+          delete,
           trailing,
         ]));
   } //build()

@@ -20,10 +20,14 @@ class new_task extends StatefulWidget {
 }
 
 class task_state extends State<new_task> {
+
+
   todo_state todoState;
   String appBarTitle;
   Task task;
   List<Widget> icons;
+  task_state(this.task, this.appBarTitle, this.todoState);
+
   bool marked = false;
 
   TextStyle titleStyle = new TextStyle(
@@ -47,7 +51,7 @@ class task_state extends State<new_task> {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay();
 
-  task_state(this.task, this.appBarTitle, this.todoState);
+
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +71,7 @@ class task_state extends State<new_task> {
         body: ListView(children: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 50.0),
-            child: CheckboxListTile(
+            child: _isEditable() ?  CheckboxListTile(
                 title: Text("Mark as Done", style: titleStyle),
                 value: marked,
                 onChanged: (bool value) {
@@ -75,7 +79,8 @@ class task_state extends State<new_task> {
                    marked = value;
                  });
                 }
-                ),
+                )//CheckboxListTile
+            : Container(height: 2,)
           ),
 
 
@@ -103,7 +108,7 @@ class task_state extends State<new_task> {
             ), //TextField
           ), //Padding
 
-          ListTile(
+       ListTile(
             title: task.date.isEmpty
                 ? Text(
                     "Pick Date",
@@ -228,13 +233,15 @@ class task_state extends State<new_task> {
   //Save data
   void _save() async {
     int result;
-    if(marked)
-      task.status = "Task Completed";
-    else
-      task.status = "Task Incomplete";
-
-    task.task = taskController.text;
-    task.date = formattedDate;
+    if(_isEditable()) {
+      if (marked) {
+        task.status = "Task Completed";
+      }
+      else
+        task.status = "";
+    }
+    //task.task = taskController.text;
+    //task.date = formattedDate;
 
 
     if (_checkNotNull() == true) {
@@ -245,7 +252,7 @@ class task_state extends State<new_task> {
         //Insert Operation
         result = await helper.insertTask(task);
       }
-      print("result is :  $result");
+
       todoState.updateListView();
 
       Navigator.pop(context);

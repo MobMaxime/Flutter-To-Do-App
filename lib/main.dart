@@ -3,6 +3,8 @@ import 'package:to_do/screens/todo_list.dart';
 import 'classes/theme_data.dart';
 import 'package:to_do/utilities/theme_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do/localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 final routeObserver = RouteObserver<PageRoute>();
 
@@ -20,6 +22,18 @@ class MyApp extends StatelessWidget{
       builder: (builder, snapshot) {
         if (snapshot.data == null) {
           return MaterialApp(
+            onGenerateTitle: (BuildContext context) =>
+                AppLocalizations.of(context).title(),
+            localizationsDelegates: [
+              const AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: [
+              const Locale('en', ''),
+              const Locale('de', ''),
+              const Locale('ru', ''),
+            ],
             home: Scaffold(
               body: Center(
                 child: Text('Loading'),
@@ -35,14 +49,25 @@ class MyApp extends StatelessWidget{
                 return MaterialApp(
                   home: Scaffold(
                     body: Center(
-                      child: Text('Loading Data'),
+                      child: Text(AppLocalizations.of(context).loadData()),
                     ),
                   ),
                 );
               } else {
                 return MaterialApp(
+                  onGenerateTitle: (BuildContext context) =>
+                      AppLocalizations.of(context).title(),
+                  localizationsDelegates: [
+                    const AppLocalizationsDelegate(),
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                  ],
+                  supportedLocales: [
+                    const Locale('en', ''),
+                    const Locale('de', ''),
+                    const Locale('ru', ''),
+                  ],
                   debugShowCheckedModeBanner: false,
-                  title: 'My To-Do List',
                   theme: snapshot.data ? Themes.light : Themes.dark,
                   navigatorObservers: [routeObserver],
                   home: todo(snapshot.data),
