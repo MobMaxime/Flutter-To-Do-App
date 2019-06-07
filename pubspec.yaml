@@ -23,6 +23,12 @@ dependencies:
     sdk: flutter
   sqflite: any
   path_provider: any
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^0.5.2
+
+
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -31,7 +37,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  intl_translation: ^0.17.1
+  flutter_launcher_icons: "^0.7.2"
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "android/app/src/main/res/drawable/todoicon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -61,12 +73,15 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: 'Roboto'
+    - family: 'Lato'
       fonts:
-        - asset: fonts/Roboto-Regular.ttf
-        - asset: fonts/Roboto-Italic.ttf
+        - asset: fonts/Lato-Regular.ttf
+        - asset: fonts/Lato-Italic.ttf
           style: italic
-        - asset: fonts/Roboto-Bold.ttf
+        - asset: fonts/Lato-Bold.ttf
+          weight: 500
+        - asset: fonts/Lato-BoldItalic.ttf
+          style: italic
           weight: 500
 
 

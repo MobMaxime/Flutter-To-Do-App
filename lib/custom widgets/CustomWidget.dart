@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:to_do/utilities/styles.dart';
 
 class CustomWidget extends StatelessWidget {
   CustomWidget({
@@ -8,15 +7,14 @@ class CustomWidget extends StatelessWidget {
     this.sub1,
     this.sub2,
     this.trailing,
+    this.status,
   }) : super(key: key);
 
   final String title;
   final String sub1;
   final String sub2;
   final Widget trailing;
-
-  final TextStyle subTextStyle = Styles.subTextStyle;
-  final TextStyle hintStyle = Styles.hintStyle;
+  final String status;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +29,7 @@ class CustomWidget extends StatelessWidget {
                   '$title',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: subTextStyle,
+                  style: TextStyle( fontSize: 20),
                 ), //Text
 
                 const Padding(padding: EdgeInsets.only(bottom: 2.0)),
@@ -39,8 +37,20 @@ class CustomWidget extends StatelessWidget {
                 Text(
                   '$sub1 · $sub2',
                   maxLines: 1,
-                  style: hintStyle,
+                  style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey,
+                      fontSize: 15),
                 ),
+
+                Text(
+                  '$status',
+                  style: TextStyle( fontFamily: 'Lato',
+                      fontStyle: FontStyle.italic,
+                      color: Theme.of(context).primaryColor,fontSize: 15),
+                ), //Text
+
               ],
             ), //Column
           ),
