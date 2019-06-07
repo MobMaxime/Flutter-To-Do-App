@@ -7,6 +7,8 @@ import 'package:sqflite/sqflite.dart';
 import 'package:to_do/custom widgets/CustomWidget.dart';
 import 'package:to_do/utilities/theme_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_do/localizations.dart';
+
 
 class todo extends StatefulWidget {
   final bool darkThemeEnabled;
@@ -50,7 +52,7 @@ class todo_state extends State<todo> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("To-Do", style: TextStyle(fontSize: 25),),
+        title: Text(AppLocalizations.of(context).title(), style: TextStyle(fontSize: 25),),
         actions: <Widget>[
           PopupMenuButton<bool>(
             onSelected: (res) {
@@ -97,17 +99,18 @@ class todo_state extends State<todo> {
                         itemBuilder: (BuildContext context, int position) {
                           return new GestureDetector(
                               onTap: () {
-                                navigateToTask(this.taskList[position], "Edit Task", this);
+                                if (this.taskList[position].status != "Task Completed")
+                                  navigateToTask(this.taskList[position], "Edit Task", this);
                               },
                               child: Card(
                                 margin: EdgeInsets.all(1.0),
                                 elevation: 2.0,
-                                //color: Colors.white,
                                 child: CustomWidget(
                                   title: this.taskList[position].task,
                                   sub1: this.taskList[position].date,
                                   sub2: this.taskList[position].time,
                                   status: this.taskList[position].status,
+                                  delete: this.taskList[position].status=="Task Completed" ? IconButton(icon: Icon(Icons.delete), onPressed: null, ) : Container(),
                                   trailing: Icon(
                                     Icons.edit,
                                     color: Theme.of(context).primaryColor,
@@ -157,4 +160,8 @@ class todo_state extends State<todo> {
       });
     });
   } //updateListView()
+
+void delete(){
+
+}
 }

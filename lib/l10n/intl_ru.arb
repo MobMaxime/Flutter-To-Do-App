@@ -1,0 +1,20 @@
+{
+  "@@last_modified": "2019-06-07T16:21:10.145878",
+  "title": "russian To-Do List",
+  "@title": {
+    "description": "Name of the App",
+    "type": "text",
+    "placeholders": {}
+  },
+     "loading": "Loading",
+     "@loading": {
+       "type": "text",
+       "placeholders": {}
+     },
+     "loadData": "Loading Data",
+     "@loadData": {
+       "description": "Display Loading Data",
+       "type": "text",
+       "placeholders": {}
+     }
+}
