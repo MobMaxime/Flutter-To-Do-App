@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _getTheme(),
-      builder: (builder, snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.data == null) {
           return MaterialApp(
             onGenerateTitle: (BuildContext context) =>
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget{
             ],
             home: Scaffold(
               body: Center(
-                child: Text('Loading'),
+                child: Text("Loading"),
               ),
             ),
           );
