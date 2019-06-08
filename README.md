@@ -1,4 +1,4 @@
-# to_do
+# To-Do List
 
-A To Do Flutter application.
+A To-Do Flutter application.
 
