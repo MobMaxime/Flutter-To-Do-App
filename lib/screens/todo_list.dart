@@ -95,12 +95,12 @@ class todo_state extends State<todo> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.882,
                     child: FutureBuilder(
-                      future: databaseHelper.getTaskList(),
+                      future: databaseHelper.getInCompleteTaskList(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.data == null) {
                           return Text("Loading");
                         } else {
-                          if (count < 1) {
+                          if (snapshot.data.length < 1) {
                             return Center(
                               child: Text(
                                 'No Tasks Added',
@@ -109,26 +109,26 @@ class todo_state extends State<todo> {
                             );
                           }
                           return ListView.builder(
-                              itemCount: count,
+                              itemCount: snapshot.data.length,
                               itemBuilder:
                                   (BuildContext context, int position) {
                                 return new GestureDetector(
                                     onTap: () {
-                                      if (this.taskList[position].status !=
+                                      if (snapshot.data[position].status !=
                                           "Task Completed")
-                                        navigateToTask(this.taskList[position],
+                                        navigateToTask(snapshot.data[position],
                                             "Edit Task", this);
                                     },
                                     child: Card(
                                       margin: EdgeInsets.all(1.0),
                                       elevation: 2.0,
                                       child: CustomWidget(
-                                        title: this.taskList[position].task,
-                                        sub1: this.taskList[position].date,
-                                        sub2: this.taskList[position].time,
-                                        status: this.taskList[position].status,
+                                        title: snapshot.data[position].task,
+                                        sub1: snapshot.data[position].date,
+                                        sub2: snapshot.data[position].time,
+                                        status: snapshot.data[position].status,
                                         delete:
-                                            this.taskList[position].status ==
+                                          snapshot.data[position].status ==
                                                     "Task Completed"
                                                 ? IconButton(
                                                     icon: Icon(Icons.delete),
@@ -158,12 +158,12 @@ class todo_state extends State<todo> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.882,
                     child: FutureBuilder(
-                      future: databaseHelper.getTaskList(),
+                      future: databaseHelper.getCompleteTaskList(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.data == null) {
                           return Text("Loading");
                         } else {
-                          if (count < 1) {
+                          if (snapshot.data.length < 1) {
                             return Center(
                               child: Text(
                                 'No Tasks Completed',
@@ -172,26 +172,26 @@ class todo_state extends State<todo> {
                             );
                           }
                           return ListView.builder(
-                              itemCount: count,
+                              itemCount: snapshot.data.length,
                               itemBuilder:
                                   (BuildContext context, int position) {
                                 return new GestureDetector(
                                     onTap: () {
-                                      if (this.taskList[position].status !=
+                                      if (snapshot.data[position].status !=
                                           "Task Completed")
-                                        navigateToTask(this.taskList[position],
+                                        navigateToTask(snapshot.data[position],
                                             "Edit Task", this);
                                     },
                                     child: Card(
                                       margin: EdgeInsets.all(1.0),
                                       elevation: 2.0,
                                       child: CustomWidget(
-                                        title: this.taskList[position].task,
-                                        sub1: this.taskList[position].date,
-                                        sub2: this.taskList[position].time,
-                                        status: this.taskList[position].status,
+                                        title: snapshot.data[position].task,
+                                        sub1: snapshot.data[position].date,
+                                        sub2: snapshot.data[position].time,
+                                        status: snapshot.data[position].status,
                                         delete:
-                                        this.taskList[position].status ==
+                                        snapshot.data[position].status ==
                                             "Task Completed"
                                             ? IconButton(
                                           icon: Icon(Icons.delete,
