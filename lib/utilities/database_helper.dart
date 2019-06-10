@@ -57,6 +57,22 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<List<Map<String, dynamic>>> getInCompleteTaskMapList() async {
+    Database db = await this.database;
+    var result = db.rawQuery('SELECT * FROM $taskTable where $colStatus = "" order by $colDate, $colTime ASC');
+    //var result = db.query(taskTable, orderBy: '$colStatus, $colDate, $colTime');
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> getCompleteTaskMapList() async {
+    Database db = await this.database;
+    var result = db.rawQuery('SELECT * FROM $taskTable where $colStatus = "Task Completed" order by $colDate, $colTime ASC');
+    //var result = db.query(taskTable, orderBy: '$colStatus, $colDate, $colTime');
+    return result;
+  }
+
+
+
   //Insert Operation: Insert a Task object to database
   Future<int> insertTask(Task task) async {
     Database db = await this.database;
@@ -88,6 +104,30 @@ class DatabaseHelper {
 
   Future<List<Task>> getTaskList() async{
     var taskMapList = await getTaskMapList(); //Get Map List from database
+    int count = taskMapList.length;
+
+    List<Task> taskList = List<Task>();
+    //For loop to create Task List from a Map List
+    for (int i=0; i<count; i++){
+      taskList.add(Task.fromMapObject(taskMapList[i]));
+    }
+    return taskList;
+  }
+
+  Future<List<Task>> getInCompleteTaskList() async{
+    var taskMapList = await getInCompleteTaskMapList(); //Get Map List from database
+    int count = taskMapList.length;
+
+    List<Task> taskList = List<Task>();
+    //For loop to create Task List from a Map List
+    for (int i=0; i<count; i++){
+      taskList.add(Task.fromMapObject(taskMapList[i]));
+    }
+    return taskList;
+  }
+
+  Future<List<Task>> getCompleteTaskList() async{
+    var taskMapList = await getCompleteTaskMapList(); //Get Map List from database
     int count = taskMapList.length;
 
     List<Task> taskList = List<Task>();
