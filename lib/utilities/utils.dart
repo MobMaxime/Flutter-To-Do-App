@@ -26,7 +26,7 @@ class Utils {
   void showSnackBar(var scaffoldkey, String message) {
     final snackBar = SnackBar(
       content: Text(message),
-      duration: Duration(seconds: 5, milliseconds: 500),
+      duration: Duration(seconds: 1, milliseconds: 500),
     );
     scaffoldkey.currentState.showSnackBar(snackBar);
   }

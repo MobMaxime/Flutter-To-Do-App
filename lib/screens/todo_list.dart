@@ -8,6 +8,7 @@ import 'package:to_do/custom widgets/CustomWidget.dart';
 import 'package:to_do/utilities/theme_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_do/localizations.dart';
+import 'package:to_do/utilities/utils.dart';
 
 class todo extends StatefulWidget {
   final bool darkThemeEnabled;
@@ -21,9 +22,11 @@ class todo extends StatefulWidget {
 
 class todo_state extends State<todo> {
   DatabaseHelper databaseHelper = DatabaseHelper();
+  Utils utility = new Utils();
   List<Task> taskList;
   int count = 0;
   String _themeType;
+  final homeScaffold = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -50,6 +53,7 @@ class todo_state extends State<todo> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
+          key: homeScaffold,
           appBar: AppBar(
             title: Text(
               AppLocalizations.of(context).title(),
@@ -93,7 +97,7 @@ class todo_state extends State<todo> {
               child: ListView(
                 children: <Widget>[
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.882,
+                    height: MediaQuery.of(context).size.height,
                     child: FutureBuilder(
                       future: databaseHelper.getInCompleteTaskList(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -156,7 +160,7 @@ class todo_state extends State<todo> {
               child: ListView(
                 children: <Widget>[
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.882,
+                    height: MediaQuery.of(context).size.height,
                     child: FutureBuilder(
                       future: databaseHelper.getCompleteTaskList(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -197,14 +201,17 @@ class todo_state extends State<todo> {
                                           icon: Icon(Icons.delete,
                                           color: Theme.of(context).primaryColor,
                                           size: 28),
-                                          onPressed: null,
+                                          onPressed: (){
+                                            delete(snapshot.data[position].id);
+                                          },
                                         )
                                             : Container(),
-                                        trailing: Icon(
-                                          Icons.edit,
-                                          color: Theme.of(context).primaryColor,
-                                          size: 28,
-                                        ),
+                                        trailing: Container()
+//                                    Icon(
+//                                          Icons.edit,
+//                                          color: Theme.of(context).primaryColor,
+//                                          size: 28,
+//                                        ),
                                       ),
                                     ) //Card
                                 );
@@ -228,69 +235,6 @@ class todo_state extends State<todo> {
         ));
   } //build()
 
-  Container getBody() {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: ListView(
-        children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.882,
-            child: FutureBuilder(
-              future: databaseHelper.getTaskList(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.data == null) {
-                  return Text('Loading');
-                } else {
-                  if (count < 1) {
-                    return Center(
-                      child: Text(
-                        'No Tasks Added',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                      itemCount: count,
-                      itemBuilder: (BuildContext context, int position) {
-                        return new GestureDetector(
-                            onTap: () {
-                              if (this.taskList[position].status !=
-                                  "Task Completed")
-                                navigateToTask(
-                                    this.taskList[position], "Edit Task", this);
-                            },
-                            child: Card(
-                              margin: EdgeInsets.all(1.0),
-                              elevation: 2.0,
-                              child: CustomWidget(
-                                title: this.taskList[position].task,
-                                sub1: this.taskList[position].date,
-                                sub2: this.taskList[position].time,
-                                status: this.taskList[position].status,
-                                delete: this.taskList[position].status ==
-                                        "Task Completed"
-                                    ? IconButton(
-                                        icon: Icon(Icons.delete),
-                                        onPressed: null,
-                                      )
-                                    : Container(),
-                                trailing: Icon(
-                                  Icons.edit,
-                                  color: Theme.of(context).primaryColor,
-                                  size: 28,
-                                ),
-                              ),
-                            ) //Card
-                            );
-                      });
-                }
-              },
-            ),
-          )
-        ],
-      ),
-    ); //Container
-  }
 
   void navigateToTask(Task task, String title, todo_state obj) async {
     bool result = await Navigator.push(
@@ -316,5 +260,10 @@ class todo_state extends State<todo> {
     });
   } //updateListView()
 
-  void delete() {}
+  void delete(int id) async {
+      await databaseHelper.deleteTask(id);
+      updateListView();
+      //Navigator.pop(context);
+    utility.showSnackBar(homeScaffold, 'Task Deleted Successfully');
+  }
 }
